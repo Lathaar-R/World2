@@ -19,7 +19,7 @@ public class MovementScript2D : MonoBehaviour
 {
     private const int BIG_NUMBER = 1000000;
 
-    #region Variables and Properties
+    #region Variables
 
     private BoxCollider2D   _collider;
     private Vector3         _speed;
@@ -51,6 +51,12 @@ public class MovementScript2D : MonoBehaviour
     [SerializeField] private int rayNum             = 5;
     private CollisionData _vertical, _horizontal;
     private InputData inputs;
+    #endregion
+
+    #region Properties
+    public BoxCollider2D Collider => _collider;
+    public Vector3 Speed => _speed;
+    public Vector3 Movement => _movement;
     #endregion
     
     private void Start()
