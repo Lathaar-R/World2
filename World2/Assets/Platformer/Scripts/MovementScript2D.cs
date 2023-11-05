@@ -101,7 +101,7 @@ public class MovementScript2D : MonoBehaviour
         //Invert y component after calculations
         _movement.y = -_movement.y;
 
-        //Move the player
+        //Move the player//Debug.Log
         transform.position += _movement;
     }
 
@@ -120,13 +120,14 @@ public class MovementScript2D : MonoBehaviour
             _caoyteTimer = cayoteTime;
             _movement.y = (_vertical.Hit.distance - _collider.bounds.extents.y) * Mathf.Sign(transform.position.y - _vertical.Hit.point.y);
             _speed.y = 0;
+            //Debug.Log("Vertical Collision");
 
             if(_vertical.AngleCol)
             {
-                if(_speed.x != 0)
-                {
+                //if(_speed.x != 0)
+               //{
                     _movement.x = Mathf.Cos(Vector2.Angle(Vector2.up, _vertical.Hit.normal) * Mathf.Deg2Rad) * _speed.x * Time.deltaTime;
-                }
+                //}
             }
         }
         else
@@ -156,7 +157,7 @@ public class MovementScript2D : MonoBehaviour
         if (_speed.y == 0)
         {
             var playerPos = transform.position;
-            RaycastHit2D[] hits = new RaycastHit2D[rayNum];
+            RaycastHit2D[] hits;
             
             //Grounded Check
             hits = PerformRayCast(new Vector3(_collider.bounds.extents.x - 0.05f, 0), Vector2.down, stepSize + _collider.bounds.extents.y, Color.red);
@@ -184,7 +185,7 @@ public class MovementScript2D : MonoBehaviour
         if(_speed.x == 0)
         {
             var playerPos = transform.position;
-            RaycastHit2D[] hits = new RaycastHit2D[rayNum];
+            RaycastHit2D[] hits;
             
             //right
             hits = PerformRayCast(new Vector3(0, _collider.bounds.extents.y - stepSize), Vector2.right, _collider.bounds.extents.x, Color.blue);
@@ -218,7 +219,10 @@ public class MovementScript2D : MonoBehaviour
     {
         if (inputs.input.x == 0 || inputs.input.x == Math.Sign(-_speed.x))
         {
-            _speed.x = Mathf.MoveTowards(_speed.x, 0, deAccel * Time.deltaTime);
+            if(inputs.input.x == Math.Sign(-_speed.x))
+                _speed.x = Mathf.MoveTowards(_speed.x, 0, deAccel * 2 < accel ? deAccel * 2 * Time.deltaTime : accel * Time.deltaTime);
+            else
+                _speed.x = Mathf.MoveTowards(_speed.x, 0, deAccel * Time.deltaTime);
             
         }
         else
@@ -258,7 +262,7 @@ public class MovementScript2D : MonoBehaviour
         if (_speed.x != 0)
         {
             var playerPos = transform.position;
-            RaycastHit2D[] hits = new RaycastHit2D[rayNum];
+            RaycastHit2D[] hits;
 
             hits = PerformRayCast(new Vector3(0, _collider.bounds.extents.y - stepSize), Vector2.right * Mathf.Sign(_speed.x), Mathf.Abs(_movement.x) + _collider.bounds.extents.x, Color.red);
 
@@ -284,7 +288,7 @@ public class MovementScript2D : MonoBehaviour
             _vertical.Col = false;
 
             var playerPos = transform.position;
-            var hits = new RaycastHit2D[rayNum];
+            RaycastHit2D[] hits;
             
             hits = PerformRayCast(new Vector3(_collider.bounds.extents.x - 0.05f, 0), Vector2.down * Mathf.Sign(_speed.y), Time.deltaTime * Mathf.Abs(_speed.y) + _collider.bounds.extents.y, Color.red);
 
@@ -292,15 +296,16 @@ public class MovementScript2D : MonoBehaviour
             //if ground has an angle
             if (_vertical.AngleCol)
             {
+                
                 hits = PerformRayCast(new Vector3(_collider.bounds.extents.x - 0.05f - inclineDist, 0), Vector2.down * Mathf.Sign(_speed.y), Time.deltaTime * Mathf.Abs(_speed.y) + _collider.bounds.extents.y, Color.green);
             }
 
+            
             if (hits.Any(x => x.distance != 0))
             {
                 var ray = hits.Where(x => x.distance != 0).Aggregate((x, y) => x.distance < y.distance ? x : y);
-                
                 //Check if the angle is too steep
-                if (Vector2.Angle(Vector2.up, ray.normal) < maxAngle)
+                if (Vector2.Angle(Vector2.up * Mathf.Sign(Speed.y), ray.normal) < maxAngle)
                 {
                     _vertical.Col = true;
                     _vertical.Hit = ray;
