@@ -703,7 +703,10 @@ MonoBehaviour:
   musicAudioSource: {fileID: 407361555}
   audioSourcesNumber: 10
   audioSourcePrefab: {fileID: 441133715}
-  soundEffectsAudioClips: []
+  soundEffectsAudioClips:
+  - {fileID: 8300000, guid: 0f0ac565a5e664d42a264f5b7f54f712, type: 3}
+  - {fileID: 8300000, guid: 7996f57599ee59946916fbeb25797520, type: 3}
+  - {fileID: 8300000, guid: beeea44a4003b8341b8074cf336908b7, type: 3}
   musicAudioClips:
   - {fileID: 8300000, guid: daad9e8d37e2b1b43ab2a92ccc8c032e, type: 3}
   - {fileID: 8300000, guid: 29646d714fe2f9143a4d95f8eb6eb34c, type: 3}
@@ -741,7 +744,7 @@ AudioSource:
   Mute: 0
   Spatialize: 0
   SpatializePostEffects: 0
-  Priority: 128
+  Priority: 169
   DopplerLevel: 1
   MinDistance: 1
   MaxDistance: 500

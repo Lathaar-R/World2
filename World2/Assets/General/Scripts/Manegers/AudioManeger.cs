@@ -56,6 +56,18 @@ public class AudioManeger : MonoBehaviour
                 #endregion
             }
 
+            //lead all the music
+            foreach (var M in musicAudioClips)
+            {
+                M.LoadAudioData();   
+            }
+
+            //lead all the sound effects
+            foreach (var S in soundEffectsAudioClips)
+            {
+                S.LoadAudioData();
+            }
+
             DontDestroyOnLoad(gameObject);
         }
         else
@@ -81,29 +93,34 @@ public class AudioManeger : MonoBehaviour
         }
     }
 
-    public void PlayMusic(String name, float fadeTime = 1f) 
+    public void PlayMusic(String name, float fadeTime = 1f, bool fromPlaylist = false) 
     {
-        if(!musicAudioSource.isPlaying)
+        if(!fromPlaylist && playlistCoroutine != null)
         {
-            AudioClip musicAudio = Array.Find(musicAudioClips, clip => clip.name == name);
+            StopPlaylist();
+        }
 
-            if(musicAudio != null)
-            {
+        AudioClip musicAudio = Array.Find(musicAudioClips, clip => clip.name == name);
+
+        if(musicAudio != null)
+        {
+            if(!musicAudioSource.isPlaying)
+            {    
                 musicAudioSource.clip = musicAudio;
                 musicAudioSource.Play();
             }
             else
             {
-                Debug.LogError("Music not found");
+                StartCoroutine(ChangeMusic(name, fadeTime, fromPlaylist));
             }
         }
         else
         {
-            StartCoroutine(ChangeMusic(name, fadeTime));
+            Debug.LogError("Music not found");
         }
     }   
 
-    private IEnumerator ChangeMusic(String name, float fadeTime)
+    private IEnumerator ChangeMusic(String name, float fadeTime, bool fromPlaylist = false)
     {
         float maxVolume = musicAudioSource.volume;
         float time = 0f;
@@ -118,7 +135,9 @@ public class AudioManeger : MonoBehaviour
 
         musicAudioSource.Stop();
 
-        PlayMusic(name, fadeTime);
+        yield return new WaitForSeconds(2f);
+
+        PlayMusic(name, fadeTime, fromPlaylist);
 
         time = 0f;
 
@@ -135,6 +154,7 @@ public class AudioManeger : MonoBehaviour
 
     public void PlayPlaylist()
     {
+        StopPlaylist();
         playlistCoroutine = StartCoroutine(PlayPlaylistCoroutine());
     }
 
@@ -152,10 +172,8 @@ public class AudioManeger : MonoBehaviour
 
         while(true)
         {
-            PlayMusic(musicAudioClips[index].name, 2f);
-
-            yield return new WaitForSeconds(musicAudioClips[index].length - 50f);
-
+            PlayMusic(musicAudioClips[index].name, 2f, true);
+            yield return new WaitForSeconds(musicAudioClips[index].length - 55f);
             index = (index + 1) % musicAudioClips.Length;
         }
     }

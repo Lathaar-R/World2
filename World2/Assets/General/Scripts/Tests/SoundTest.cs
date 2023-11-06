@@ -17,7 +17,7 @@ public class SoundTest : MonoBehaviour
 
         if(Input.GetKeyDown(KeyCode.N))
         {
-            AudioManeger.Instace.PlayMusic("jumping", 2);
+            AudioManeger.Instace.PlayMusic("stranger-things-124008", 2);
         }
 
         if(Input.GetKeyDown(KeyCode.B))
